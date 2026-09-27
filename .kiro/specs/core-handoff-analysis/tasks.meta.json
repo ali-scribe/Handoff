@@ -1,0 +1,203 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Create source and test package structure": [
+      {
+        "executionId": "a4803b02-d873-4383-a4e2-098701663be2",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790135987434
+      },
+      {
+        "executionId": "a4803b02-d873-4383-a4e2-098701663be2",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790136062854
+      }
+    ],
+    "1. Set up the domain package skeleton": [
+      {
+        "executionId": "a4803b02-d873-4383-a4e2-098701663be2",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790136062994
+      }
+    ],
+    "2.1 Implement field enums and `HandoffField` in `app/domain/handoff.py`": [
+      {
+        "executionId": "9e9a9a16-9c2b-478c-837e-6cda10daae69",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790136325196
+      },
+      {
+        "executionId": "9e9a9a16-9c2b-478c-837e-6cda10daae69",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790136414259
+      }
+    ],
+    "2.2 Implement `StructuredHandoff` in `app/domain/handoff.py`": [
+      {
+        "executionId": "2f150696-f106-4da3-9107-2a037a6148bf",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790136611087
+      },
+      {
+        "executionId": "2f150696-f106-4da3-9107-2a037a6148bf",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790136696398
+      }
+    ],
+    "2. Implement the domain model (MODEL FIRST)": [
+      {
+        "executionId": "2f150696-f106-4da3-9107-2a037a6148bf",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790136696547
+      }
+    ],
+    "2.3 Write model tests in `tests/domain/test_handoff_model.py`": [
+      {
+        "executionId": "bcabcb79-98bf-4f56-9cf9-c2671221f25a",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790137055635
+      },
+      {
+        "executionId": "bcabcb79-98bf-4f56-9cf9-c2671221f25a",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790137171608
+      }
+    ],
+    "3. Model checkpoint": [
+      {
+        "executionId": "f605ba2f-ae4b-4352-b59f-a9d9161b45fe",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790137235706
+      }
+    ],
+    "4.1 Implement result enums and models in `app/domain/validation.py`": [
+      {
+        "executionId": "d7656990-6133-432d-ab50-2943ae5d1d11",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790137277886
+      },
+      {
+        "executionId": "d7656990-6133-432d-ab50-2943ae5d1d11",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790137438662
+      }
+    ],
+    "4.2 Re-export the public API from `app/domain/__init__.py`": [
+      {
+        "executionId": "def082b6-4e61-4e2b-9368-befd25b6431f",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790137481112
+      },
+      {
+        "executionId": "def082b6-4e61-4e2b-9368-befd25b6431f",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790137544281
+      }
+    ],
+    "4. Implement validation result models (still no validator logic)": [
+      {
+        "executionId": "def082b6-4e61-4e2b-9368-befd25b6431f",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790137544429
+      }
+    ],
+    "5.1 Implement the required-fields policy in `app/domain/validator.py`": [
+      {
+        "executionId": "59ba2803-c9c4-4d50-9c5e-1a4c77ec0aec",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790137813965
+      },
+      {
+        "executionId": "59ba2803-c9c4-4d50-9c5e-1a4c77ec0aec",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790137937921
+      }
+    ],
+    "5.2 Implement issue detection in `validate_handoff(handoff: StructuredHandoff) -> ValidationResult`": [
+      {
+        "executionId": "911e347e-5b2e-43bd-96d3-87af65bee2a5",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790138757686
+      },
+      {
+        "executionId": "911e347e-5b2e-43bd-96d3-87af65bee2a5",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790138927403
+      }
+    ],
+    "5.3 Implement declared-contradiction handling in `validate_handoff`": [
+      {
+        "executionId": "9e82d504-fc62-42a4-a5fc-6ed5551c3fde",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790139010580
+      },
+      {
+        "executionId": "9e82d504-fc62-42a4-a5fc-6ed5551c3fde",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790139151864
+      }
+    ],
+    "5.4 Implement readiness derivation in `validate_handoff`": [
+      {
+        "executionId": "23babcc4-2f98-49b6-a6e6-6ef4dd0f6c67",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790140270987
+      },
+      {
+        "executionId": "23babcc4-2f98-49b6-a6e6-6ef4dd0f6c67",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790140396031
+      }
+    ],
+    "5. Implement the deterministic validator (VALIDATOR SECOND)": [
+      {
+        "executionId": "23babcc4-2f98-49b6-a6e6-6ef4dd0f6c67",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790140396143
+      }
+    ],
+    "6.1 Write core validator tests in `tests/domain/test_validator.py`": [
+      {
+        "executionId": "d7960a92-e0ce-4f40-8cda-dfd8f1cedaa5",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790140700194
+      },
+      {
+        "executionId": "d7960a92-e0ce-4f40-8cda-dfd8f1cedaa5",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790140860924
+      }
+    ],
+    "6. Validator behavior tests": [
+      {
+        "executionId": "d7960a92-e0ce-4f40-8cda-dfd8f1cedaa5",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790140861089
+      }
+    ],
+    "6.2 Write the seven worked-example scenario tests in `tests/domain/test_validator.py`": [
+      {
+        "executionId": "d7960a92-e0ce-4f40-8cda-dfd8f1cedaa5",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790140867894
+      },
+      {
+        "executionId": "d7960a92-e0ce-4f40-8cda-dfd8f1cedaa5",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790140985720
+      }
+    ],
+    "7. Final checkpoint — full suite verification": [
+      {
+        "executionId": "d7960a92-e0ce-4f40-8cda-dfd8f1cedaa5",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790140991709
+      },
+      {
+        "executionId": "d7960a92-e0ce-4f40-8cda-dfd8f1cedaa5",
+        "chatSessionId": "sess_1908271b-3d39-4026-82be-18285f9d2a0e",
+        "timestamp": 1790141030359
+      }
+    ]
+  }
+}

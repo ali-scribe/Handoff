@@ -1,0 +1,1206 @@
+﻿/*
+ * Single global stylesheet for Handoff.
+ *
+ * "Quietly intelligent" light theme: warm ivory page, clean white surfaces,
+ * deep-charcoal text, slate secondary text, warm-gray borders, one sophisticated
+ * indigo accent, and muted semantic readiness colors used only as small accents
+ * (never large fills). Generous whitespace, restrained shadows, moderate corner
+ * rounding, and a clear typographic hierarchy. Labels always accompany color;
+ * visible focus states everywhere; responsive to a single column on narrow
+ * screens.
+ *
+ * Structural class names and data-* hooks are preserved so the styling is
+ * component-agnostic and requires no component logic changes. Hierarchy (H2 vs
+ * H3) and button ranking (primary vs secondary) are established purely via
+ * element/attribute selectors here — no extra classes in markup.
+ */
+
+:root {
+  /* Surfaces & text — warm editorial palette (no pure white as dominant surface) */
+  --color-bg: #f3f0e8;
+  --color-surface: #fcfbf7;
+  --color-surface-2: #f7f4ec;
+  --color-border: #e7e3d8;
+  --color-border-strong: #d8d2c4;
+  --color-text: #23211d;
+  --color-text-muted: #6e6a61;
+
+  /* Single sophisticated indigo accent */
+  --color-accent: #4f46e5;
+  --color-accent-hover: #4338ca;
+  --color-accent-contrast: #ffffff;
+  --color-focus-ring: rgba(79, 70, 229, 0.4);
+
+  /* Muted semantic readiness / severity (small accents only) */
+  --color-ready: #18794e;
+  --color-ready-soft: #eaf3ee;
+  --color-clarify: #a15c00;
+  --color-clarify-soft: #f6efe4;
+  --color-notready: #b42318;
+  --color-notready-soft: #f7ebe9;
+
+  --color-critical: #b42318;
+  --color-important: #a15c00;
+  --color-minor: #686b73;
+
+  /* Background pattern (theme-aware). Light: warm muted dots + faint hairlines. */
+  --pattern-dot: rgba(150, 140, 120, 0.42);
+  --pattern-dot-size: 1.2px;
+  --pattern-line-a: rgba(150, 145, 175, 0.16);
+  --pattern-line-b: rgba(170, 160, 140, 0.18);
+
+  /*
+   * Dots revealed near the pointer use the SAME Handoff accent as the Analyze
+   * button (--color-accent), so the interaction reads as "activating the
+   * interface" in one coherent color. color-mix keeps them slightly softened
+   * rather than full-strength neon.
+   */
+  --pattern-dot-active: color-mix(in srgb, var(--color-accent) 78%, transparent);
+  /* Barely-perceptible brand accent shadow (not a glow). */
+  --brand-accent-shadow: rgba(79, 70, 229, 0.14);
+
+  /* Spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  --radius-sm: 8px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+
+  /* Restrained, single soft shadow */
+  --shadow-soft: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.03);
+  --maxw: 720px;
+
+  /* Type scale */
+  --font-brand: 3rem;
+  --font-display: 2.75rem;
+  --font-h1: 1.375rem;
+  --font-h2: 1.3rem;
+  --font-h3: 0.95rem;
+  --font-body: 1rem;
+  --font-small: 0.875rem;
+
+  /* Motion system — restrained, consistent timings + natural easing. */
+  --motion-micro: 160ms;
+  --motion-component: 240ms;
+  --motion-entrance: 300ms;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Elevations for interactive buttons. */
+  --shadow-btn: 0 1px 2px rgba(16, 24, 40, 0.08);
+  --shadow-btn-hover: 0 4px 10px rgba(79, 70, 229, 0.18);
+}
+
+/*
+ * --- Dark theme ---
+ *
+ * A deliberate deep-charcoal + indigo theme (not an inversion). Components keep
+ * consuming the same semantic variables, so only these token values change.
+ * Semantic readiness colors are lightened for AA contrast on dark surfaces, and
+ * the background pattern uses subtle indigo/slate dots (visible, not glowing).
+ */
+[data-theme="dark"] {
+  --color-bg: #171816;
+  --color-surface: #22231f;
+  --color-surface-2: #292a25;
+  --color-border: #3a3b35;
+  --color-border-strong: #4a4b44;
+  --color-text: #f2f0e8;
+  --color-text-muted: #b4b1a8;
+
+  --color-accent: #818cf8;
+  --color-accent-hover: #a5b0fb;
+  --color-accent-contrast: #171816;
+  --color-focus-ring: rgba(129, 140, 248, 0.5);
+
+  --color-ready: #52c785;
+  --color-ready-soft: #1e2e26;
+  --color-clarify: #e0b45c;
+  --color-clarify-soft: #302a1d;
+  --color-notready: #f08f86;
+  --color-notready-soft: #33211f;
+
+  --color-critical: #f08f86;
+  --color-important: #e0b45c;
+  --color-minor: #b4b1a8;
+
+  /* Dark pattern: subtle indigo/slate dots, clearly visible without glow. */
+  --pattern-dot: rgba(150, 158, 210, 0.22);
+  --pattern-dot-size: 1.2px;
+  --pattern-line-a: rgba(140, 148, 200, 0.1);
+  --pattern-line-b: rgba(120, 124, 150, 0.09);
+
+  /* Near the pointer: the dark-theme accent (--color-accent), softened. */
+  --pattern-dot-active: color-mix(in srgb, var(--color-accent) 70%, transparent);
+  --brand-accent-shadow: rgba(129, 140, 248, 0.2);
+}
+
+/*
+ * Shared one-time entrance used by result/clarification/ready surfaces. Fires
+ * on mount (these elements are freshly mounted on state change), never loops.
+ */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes copied-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: Inter, "DM Sans", Manrope, system-ui, -apple-system, "Segoe UI",
+    Roboto, sans-serif;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* Short theme-switch transition (disabled under reduced motion). */
+  transition: background var(--motion-micro) var(--ease),
+    color var(--motion-micro) var(--ease);
+}
+
+/* Theme-switch transition on the main themed surfaces. */
+.card,
+.readiness-hero,
+.formatted-output,
+.example {
+  transition: background var(--motion-micro) var(--ease),
+    border-color var(--motion-micro) var(--ease),
+    color var(--motion-micro) var(--ease);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/*
+ * --- Page background pattern ---
+ *
+ * The warm ivory page has a faint geometric texture built into the background
+ * itself (not decorative objects on top of the UI): a soft dot grid layered
+ * with very thin diagonal hairlines. Implemented as a single fixed, full-
+ * viewport pseudo-element painted purely with CSS gradients — no image, no
+ * dependency. It is non-interactive (pointer-events:none) and sits below all
+ * content (z-index:-1), so the UI reads as a clean surface floating on a
+ * designed canvas. Density steps down on tablet and mobile (see media queries).
+ */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--color-bg);
+  background-image:
+    /* dot grid — the primary, now more perceptible texture */
+    radial-gradient(
+      var(--pattern-dot) var(--pattern-dot-size),
+      transparent var(--pattern-dot-size)
+    ),
+    /* thin diagonal hairlines, one each way, for a subtle technical weave */
+    repeating-linear-gradient(
+      45deg,
+      transparent 0,
+      transparent 43px,
+      var(--pattern-line-a) 43px,
+      var(--pattern-line-a) 44px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent 0,
+      transparent 43px,
+      var(--pattern-line-b) 43px,
+      var(--pattern-line-b) 44px
+    );
+  background-size: 20px 20px, auto, auto;
+  background-position: 0 0, 0 0, 0 0;
+  /*
+   * Opacity is baked into the pattern token colors (per theme) rather than a
+   * layer-wide fade, so the dots read clearly while hairlines stay subtle.
+   */
+}
+
+/*
+ * --- Interactive dot layer ---
+ *
+ * A second fixed, full-viewport, non-interactive layer that paints the SAME dot
+ * grid in a slightly stronger indigo/lavender tint, revealed only near the
+ * pointer via a soft radial mask centered at (--px, --py). Its influence scales
+ * with --interact (0 at rest → 1 near active pointer), all driven by CSS
+ * variables the InteractiveBackground component writes inside a rAF loop — no
+ * React re-render. Sits just above the base pattern but below all content, and
+ * never intercepts input. Dots shift ≤2px toward the pointer for a gentle
+ * "paper reacting to touch" feel.
+ */
+.interactive-bg {
+  --px: 50vw;
+  --py: 50vh;
+  --interact: 0;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* Same dot grid, brighter tint. */
+  background-image: radial-gradient(
+    var(--pattern-dot-active) var(--pattern-dot-size),
+    transparent var(--pattern-dot-size)
+  );
+  background-size: 20px 20px;
+  /* Reveal only near the pointer, with smooth falloff (no hard edge). */
+  -webkit-mask-image: radial-gradient(
+    220px 220px at var(--px) var(--py),
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.55) 35%,
+    rgba(0, 0, 0, 0) 72%
+  );
+  mask-image: radial-gradient(
+    220px 220px at var(--px) var(--py),
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.55) 35%,
+    rgba(0, 0, 0, 0) 72%
+  );
+  /* Strength drives visibility and a tiny (≤2px) settle toward the pointer. */
+  opacity: var(--interact);
+  transform: translate3d(
+    calc((var(--px) - 50vw) * 0.004),
+    calc((var(--py) - 50vh) * 0.004),
+    0
+  );
+  will-change: opacity, transform;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: var(--space-12) var(--space-4) var(--space-12);
+}
+
+/* --- Header (centered brand hero) --- */
+.app-header {
+  position: relative;
+  margin-bottom: var(--space-10);
+  padding-bottom: var(--space-6);
+  text-align: center;
+}
+
+/*
+ * Theme toggle: compact, top-right, absolutely positioned so it never shifts
+ * the centered branding. Icon-only button with an accessible label.
+ */
+.theme-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background var(--motion-micro) var(--ease),
+    border-color var(--motion-micro) var(--ease),
+    color var(--motion-micro) var(--ease);
+}
+
+.theme-toggle:hover {
+  background: var(--color-surface-2);
+  border-color: var(--color-text-muted);
+  color: var(--color-text);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-color: var(--color-accent);
+}
+
+.theme-toggle svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  display: block;
+}
+
+.app-title {
+  margin: 0;
+  font-size: var(--font-brand);
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  color: var(--color-text);
+  line-height: 1.05;
+  /* Barely-perceptible theme-aware brand accent (not a glow). */
+  text-shadow: 0 1px 10px var(--brand-accent-shadow);
+}
+
+.app-tagline {
+  margin: var(--space-2) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-body);
+  font-weight: 450;
+  letter-spacing: 0.005em;
+}
+
+/* --- Cards / sections --- */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  margin-bottom: var(--space-6);
+  box-shadow: var(--shadow-soft);
+}
+
+/*
+ * Typographic hierarchy is set by element type so no extra classes are needed:
+ * h2.section-title is the page/section title; h3.section-title is a quieter
+ * subsection heading.
+ */
+.section-title {
+  margin: 0 0 var(--space-4);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+h2.section-title {
+  font-size: var(--font-h2);
+}
+
+h3.section-title {
+  font-size: var(--font-h3);
+  font-weight: 600;
+  letter-spacing: 0;
+  margin: var(--space-8) 0 var(--space-3);
+  color: var(--color-text);
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.example {
+  color: var(--color-text);
+  font-size: var(--font-small);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  margin: var(--space-4) 0 0;
+}
+
+/*
+ * --- Demo examples ("Try an example") ---
+ *
+ * A secondary starting-point section under the Analyze button. Compact,
+ * restrained cards using the existing tokens; a single subtle hover transition.
+ * Never competes with the textarea or Analyze button.
+ */
+.demo-examples {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+
+.demo-examples-title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--font-small);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.demo-examples-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.demo-example {
+  flex: 1 1 0;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  text-align: left;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: border-color var(--motion-micro) var(--ease),
+    background var(--motion-micro) var(--ease);
+}
+
+.demo-example:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  background: var(--color-surface-2);
+}
+
+.demo-example:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-color: var(--color-accent);
+}
+
+.demo-example:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.demo-example-title {
+  font-weight: 600;
+  font-size: var(--font-small);
+  color: var(--color-text);
+}
+
+.demo-example-desc {
+  font-size: var(--font-small);
+  color: var(--color-text-muted);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* --- Input screen --- */
+/*
+ * Content heading ("What needs to be handed off?"). Sized as a strong section
+ * heading — deliberately smaller than the centered brand title above so the
+ * hierarchy reads brand > tagline > content heading.
+ */
+.input-display {
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  margin: 0 0 var(--space-3);
+  color: var(--color-text);
+}
+
+/*
+ * --- Process flow indicator ---
+ *
+ * A quiet, secondary graphic (below the main content) showing where the handoff
+ * is in its journey: Input -> Results -> Clarify -> Ready. State comes from the
+ * app's existing phase (via ProcessFlow's `stage` prop); activation is driven
+ * by data-attributes and expressed only through opacity/scale/accent-color
+ * transitions — no animation loop, no pulsing. Decorative: aria-hidden,
+ * pointer-events:none. It uses the SAME --color-accent as the Analyze button so
+ * the whole interface shares one accent language.
+ */
+.process-flow {
+  max-width: 420px;
+  margin: var(--space-10) auto 0;
+  padding: 0 var(--space-4);
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.process-flow-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Connecting segments: subtle by default, accent when the path is complete. */
+.process-flow .process-line {
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  transition: stroke var(--motion-component) var(--ease);
+}
+
+.process-flow .process-line[data-complete="true"] {
+  stroke: color-mix(in srgb, var(--color-accent) 55%, transparent);
+}
+
+/* Nodes: muted -> completed (softly lit) -> active (accent). */
+.process-flow .process-node {
+  fill: var(--color-surface);
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: fill var(--motion-component) var(--ease),
+    stroke var(--motion-component) var(--ease),
+    transform var(--motion-component) var(--ease),
+    opacity var(--motion-component) var(--ease);
+}
+
+.process-flow .process-node[data-node-state="muted"] {
+  opacity: 0.55;
+}
+
+.process-flow .process-node[data-node-state="complete"] {
+  stroke: color-mix(in srgb, var(--color-accent) 55%, var(--color-border-strong));
+  fill: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface));
+}
+
+.process-flow .process-node[data-node-state="active"] {
+  stroke: var(--color-accent);
+  fill: color-mix(in srgb, var(--color-accent) 30%, var(--color-surface));
+  transform: scale(1.28);
+}
+
+/* The final Ready node gets the strongest (still restrained) accent when active. */
+.process-flow .process-node[data-final="true"][data-node-state="active"] {
+  fill: var(--color-accent);
+  stroke: var(--color-accent);
+  transform: scale(1.35);
+}
+
+/* --- Form controls --- */
+label {
+  display: block;
+  font-weight: 600;
+  font-size: var(--font-small);
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+textarea,
+input[type="text"] {
+  width: 100%;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  font: inherit;
+  resize: vertical;
+  transition: border-color var(--motion-micro) var(--ease),
+    box-shadow var(--motion-micro) var(--ease);
+}
+
+textarea::placeholder,
+input[type="text"]::placeholder {
+  color: var(--color-text-muted);
+}
+
+textarea {
+  min-height: 11rem;
+  line-height: 1.6;
+}
+
+textarea:hover:not(:focus),
+input[type="text"]:hover:not(:focus) {
+  border-color: var(--color-text-muted);
+}
+
+textarea:focus,
+input[type="text"]:focus,
+button:focus-visible,
+input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-color: var(--color-accent);
+}
+
+textarea:focus,
+input[type="text"]:focus {
+  /* Subtle indigo border + very soft, restrained indigo ring (no neon glow). */
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+  outline: none;
+}
+
+/* --- Buttons --- */
+/* Default (non-primary) button = quiet ghost/secondary treatment. */
+button {
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: var(--space-3) var(--space-5);
+  transition: border-color var(--motion-micro) var(--ease),
+    background var(--motion-micro) var(--ease),
+    color var(--motion-micro) var(--ease),
+    box-shadow var(--motion-micro) var(--ease),
+    transform var(--motion-micro) var(--ease);
+}
+
+button:hover:not(:disabled) {
+  background: var(--color-surface-2);
+  border-color: var(--color-text-muted);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Primary (Analyze / Copy handoff): strong indigo with subtle elevation. */
+button.primary {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  border-color: var(--color-accent);
+  font-weight: 600;
+  box-shadow: var(--shadow-btn);
+}
+
+button.primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+  box-shadow: var(--shadow-btn-hover);
+  transform: translateY(-1px);
+}
+
+button.primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-btn);
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+/* --- Spinner --- */
+.spinner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text);
+  font-size: var(--font-small);
+}
+
+.spinner::before {
+  content: "";
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--color-border-strong);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner::before {
+    animation: none;
+  }
+  /*
+   * Process flow: keep state legible but remove motion — no node scaling, no
+   * animated line/color transition (state changes apply instantly).
+   */
+  .process-flow .process-node,
+  .process-flow .process-line {
+    transition: none;
+  }
+  .process-flow .process-node[data-node-state="active"],
+  .process-flow .process-node[data-final="true"][data-node-state="active"] {
+    transform: none;
+  }
+  /*
+   * Disable non-essential motion. Functional state changes (readiness color,
+   * "Copied" text, focus rings) still apply instantly — only the movement is
+   * removed.
+   */
+  .readiness-hero,
+  .clarification,
+  .card:has(#ready-title),
+  .copy-success {
+    animation: none;
+  }
+  /*
+   * Disable the interactive background entirely under reduced motion. The
+   * component also skips its rAF loop, so this is belt-and-suspenders.
+   */
+  .interactive-bg {
+    display: none;
+  }
+  button,
+  textarea,
+  input[type="text"],
+  .field,
+  .question,
+  body,
+  .card,
+  .formatted-output,
+  .example,
+  .theme-toggle,
+  .demo-example {
+    transition: none;
+  }
+  button.primary:hover:not(:disabled),
+  button.primary:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* --- Error banner (calm) --- */
+.error-banner {
+  background: var(--color-notready-soft);
+  border: 1px solid var(--color-notready);
+  color: var(--color-text);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  margin: var(--space-4) 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+/* --- Readiness hero --- */
+/*
+ * Elegant, prominent, but not a full color fill: a neutral surface with a
+ * colored left accent bar plus the colored badge. Keeps the page calm while
+ * making readiness obvious.
+ */
+.readiness-hero {
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  padding: var(--space-5) var(--space-6);
+  margin-bottom: var(--space-8);
+  background: var(--color-surface-2);
+  animation: rise-in var(--motion-entrance) var(--ease) both;
+}
+
+.readiness-hero[data-state="ready"] {
+  border-left-color: var(--color-ready);
+}
+
+.readiness-hero[data-state="needs_clarification"] {
+  border-left-color: var(--color-clarify);
+}
+
+.readiness-hero[data-state="not_ready"] {
+  border-left-color: var(--color-notready);
+}
+
+.readiness-hero-heading {
+  margin: var(--space-2) 0 var(--space-1);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.readiness-hero-sub {
+  margin: var(--space-2) 0 0;
+  color: var(--color-text);
+  font-size: var(--font-small);
+}
+
+/* --- Readiness badge (moderate rounding, not a full pill) --- */
+.readiness-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 600;
+  font-size: var(--font-small);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid currentColor;
+}
+
+.readiness-badge::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.readiness-badge[data-state="ready"] {
+  color: var(--color-ready);
+  background: var(--color-ready-soft);
+}
+
+.readiness-badge[data-state="needs_clarification"] {
+  color: var(--color-clarify);
+  background: var(--color-clarify-soft);
+}
+
+.readiness-badge[data-state="not_ready"] {
+  color: var(--color-notready);
+  background: var(--color-notready-soft);
+}
+
+/* --- Structured fields --- */
+.fields {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.field {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  transition: border-color var(--motion-component) var(--ease),
+    background var(--motion-component) var(--ease);
+}
+
+.field:hover {
+  border-color: var(--color-border-strong);
+}
+
+.field-label {
+  font-weight: 700;
+  font-size: var(--font-small);
+  letter-spacing: 0.01em;
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.field-value {
+  color: var(--color-text);
+}
+
+.field-value ul {
+  margin: var(--space-1) 0 0;
+  padding-left: 1.1rem;
+}
+
+.field-marker {
+  font-weight: 600;
+  font-size: var(--font-small);
+}
+
+.field[data-condition="missing"] .field-marker {
+  color: var(--color-notready);
+}
+
+/* Attention-needed (backend-flagged) missing field: restrained red left accent. */
+.field[data-condition="missing"] {
+  border-left: 3px solid var(--color-notready);
+}
+
+/* Ambiguous field: restrained amber left accent. */
+.field[data-condition="ambiguous"] {
+  border-left: 3px solid var(--color-clarify);
+}
+
+.field[data-condition="ambiguous"] .field-marker {
+  color: var(--color-clarify);
+}
+
+/*
+ * Optional-missing: a MISSING field the backend did NOT flag in
+ * validation.issues. Presented neutrally (never as an error). The extra
+ * attribute gives these rules higher specificity than the plain missing rules
+ * above, so the muted marker AND neutral border always win for optional-missing
+ * fields (they must never look like an error).
+ */
+.field[data-optional-missing="true"] {
+  background: var(--color-surface-2);
+  border-left: 1px solid var(--color-border);
+}
+
+.field[data-condition="missing"][data-optional-missing="true"] .field-marker {
+  color: var(--color-text-muted);
+}
+
+.field[data-condition="not_applicable"] {
+  background: var(--color-surface-2);
+}
+
+.field[data-condition="not_applicable"] .field-marker {
+  color: var(--color-text-muted);
+}
+
+/*
+ * Optional/not-applicable helper note. Slightly larger than tiny and using the
+ * primary text color (not muted) so it stays comfortably readable, per the
+ * accessibility priority; the "optional/neutral" meaning is carried by the
+ * wording, not by faint gray.
+ */
+.field-optional-note {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: var(--font-small);
+  margin-top: var(--space-1);
+}
+
+/* --- Issues: WHAT'S MISSING --- */
+.issues-label {
+  font-size: var(--font-small);
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-text);
+  margin: var(--space-8) 0 var(--space-4);
+}
+
+.issue-group {
+  margin-bottom: var(--space-5);
+}
+
+.issue-group-title {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-small);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.issue {
+  border-left: 3px solid var(--color-border-strong);
+  padding: var(--space-2) 0 var(--space-2) var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.severity-chip {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.12rem var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid currentColor;
+  margin-right: var(--space-2);
+}
+
+.severity-chip[data-severity="critical"] {
+  color: var(--color-critical);
+}
+.severity-chip[data-severity="important"] {
+  color: var(--color-important);
+}
+.severity-chip[data-severity="minor"] {
+  color: var(--color-minor);
+}
+
+.issue[data-severity="critical"] {
+  border-left-color: var(--color-critical);
+}
+.issue[data-severity="important"] {
+  border-left-color: var(--color-important);
+}
+.issue[data-severity="minor"] {
+  border-left-color: var(--color-minor);
+}
+
+.issue-field {
+  color: var(--color-text-muted);
+  font-size: var(--font-small);
+  font-weight: 500;
+  margin-top: var(--space-1);
+}
+
+/* --- Clarification (guided completion, not an error form) --- */
+/* Subtle one-time entrance when the clarification step appears. */
+.clarification {
+  animation: rise-in var(--motion-entrance) var(--ease) both;
+}
+
+.question {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  margin-bottom: var(--space-3);
+  background: var(--color-surface);
+  transition: border-color var(--motion-component) var(--ease);
+}
+
+.question:focus-within {
+  border-color: var(--color-border-strong);
+}
+
+.question-text {
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.resolve-control {
+  margin-top: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text);
+  font-weight: 400;
+  font-size: var(--font-small);
+}
+
+.inline-hint {
+  color: var(--color-clarify);
+  font-size: var(--font-small);
+  margin-top: var(--space-1);
+}
+
+/* --- Execution-ready --- */
+/*
+ * Subtle one-time entrance for the final success surface. Scoped via :has() to
+ * the card that holds the execution-ready title, so only this surface animates
+ * on appearance (no markup change). Falls back gracefully (no animation) in the
+ * rare engine without :has().
+ */
+.card:has(#ready-title) {
+  animation: rise-in var(--motion-entrance) var(--ease) both;
+}
+
+.formatted-output {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  max-height: 60vh;
+  overflow: auto;
+}
+
+.copy-success {
+  color: var(--color-ready);
+  font-weight: 600;
+  font-size: var(--font-small);
+  /* Subtle fade/slide when the "Copied" confirmation appears. */
+  animation: copied-in var(--motion-micro) var(--ease) both;
+}
+
+.backend-note {
+  color: var(--color-text-muted);
+  font-size: var(--font-small);
+  margin-top: var(--space-2);
+}
+
+/* --- Responsive --- */
+
+/* Tablet: slightly reduce pattern density (larger dot spacing, soften layer). */
+@media (max-width: 960px) {
+  body::before {
+    background-size: 24px 24px, auto, auto;
+    opacity: 0.85;
+  }
+  /* Lighter interactive response: smaller reveal radius, gentler tint. */
+  .interactive-bg {
+    background-size: 24px 24px;
+    -webkit-mask-image: radial-gradient(
+      160px 160px at var(--px) var(--py),
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.5) 35%,
+      rgba(0, 0, 0, 0) 72%
+    );
+    mask-image: radial-gradient(
+      160px 160px at var(--px) var(--py),
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.5) 35%,
+      rgba(0, 0, 0, 0) 72%
+    );
+  }
+}
+
+@media (max-width: 640px) {
+  .app {
+    padding: var(--space-8) var(--space-4) var(--space-10);
+  }
+  .app-title {
+    font-size: 2.25rem;
+  }
+  .input-display {
+    font-size: 1.4rem;
+  }
+  .card {
+    padding: var(--space-6);
+  }
+  .button-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .button-row button {
+    width: 100%;
+  }
+  .field {
+    display: block;
+  }
+  /*
+   * Mobile: keep the process flow visible but understated — tighter top margin
+   * and a smaller max-width so it never crowds the form.
+   */
+  .process-flow {
+    max-width: 300px;
+    margin-top: var(--space-8);
+  }
+  /* Mobile: stack the demo examples into a compact vertical list. */
+  .demo-examples-list {
+    flex-direction: column;
+  }
+  .demo-example {
+    min-width: 0;
+  }
+  /*
+   * Mobile: simplify to a fainter dots-only texture (hairlines dropped). Uses
+   * the theme-aware dot token so it adapts to light/dark.
+   */
+  body::before {
+    background-image: radial-gradient(
+      var(--pattern-dot) var(--pattern-dot-size),
+      transparent var(--pattern-dot-size)
+    );
+    background-size: 26px 26px;
+    opacity: 0.7;
+  }
+  /* Mobile: keep the touch response subtle and matched to the base spacing. */
+  .interactive-bg {
+    background-size: 26px 26px;
+    -webkit-mask-image: radial-gradient(
+      130px 130px at var(--px) var(--py),
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.45) 38%,
+      rgba(0, 0, 0, 0) 74%
+    );
+    mask-image: radial-gradient(
+      130px 130px at var(--px) var(--py),
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.45) 38%,
+      rgba(0, 0, 0, 0) 74%
+    );
+  }
+}

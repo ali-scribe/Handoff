@@ -1,0 +1,69 @@
+﻿{
+  "version": 1,
+  "cases": [
+    {
+      "id": "eval-001",
+      "category": "software",
+      "request": "Can you make the app better? It feels slow and a bit clunky. Just improve it when you get a chance.",
+      "expected_readiness": "not_ready",
+      "expected_critical_fields": ["objective", "expected_output"],
+      "notes": "No concrete goal or definition of a finished result. 'Make it better' is not executable: nobody can tell what to change or when it is done."
+    },
+    {
+      "id": "eval-002",
+      "category": "university",
+      "request": "Please prepare the final presentation for our database project and make it look professional. Add the important parts from our project and have it ready soon.",
+      "expected_readiness": "not_ready",
+      "expected_critical_fields": ["expected_output"],
+      "notes": "There is a rough objective (a presentation) but no concrete definition of the deliverable (length, format, what 'important parts' means) and no real deadline. A peer could not execute this as-is."
+    },
+    {
+      "id": "eval-003",
+      "category": "freelance",
+      "request": "I need a new logo for my coffee shop, Bean There. Make it modern and clean, something that works on a sign and on Instagram. Send me the files when they're ready soon.",
+      "expected_readiness": "needs_clarification",
+      "expected_critical_fields": [],
+      "notes": "Objective and expected output (logo files) are clear enough to start, but 'modern and clean' and 'soon' are vague. Important-but-not-blocking clarifications, so needs_clarification rather than not_ready."
+    },
+    {
+      "id": "eval-004",
+      "category": "small_business",
+      "request": "Marco, please update our Shopify store's shipping settings so orders over $50 ship free within the US, effective for all new orders. Use the existing Standard shipping profile. The change is done when a test order over $50 shows free shipping at checkout and one under $50 still shows the normal rate. Complete this by October 3, 2026.",
+      "expected_readiness": "ready",
+      "expected_critical_fields": [],
+      "notes": "Owner (Marco), objective, concrete expected output, acceptance criteria, deadline, and the input (Standard profile) are all present. A person could execute this without asking questions."
+    },
+    {
+      "id": "eval-005",
+      "category": "content_design",
+      "request": "Priya will write a 600-word blog post announcing our new mobile app for the company blog. Base it on the approved product brief in the shared drive (Q3 App Launch folder). It should cover the three headline features and include one call-to-action linking to the download page. It's done when it is 550-650 words, mentions all three features, and includes the CTA link. Publish by September 30, 2026.",
+      "expected_readiness": "ready",
+      "expected_critical_fields": [],
+      "notes": "Fully executable. Constraints are not stated, but constraints are optional and their absence should NOT block readiness. This case checks that optional-missing fields do not cause a false positive."
+    },
+    {
+      "id": "eval-006",
+      "category": "everyday",
+      "request": "Hey, can you grab the stuff for the party this weekend? Get the usual and don't spend too much.",
+      "expected_readiness": "not_ready",
+      "expected_critical_fields": ["expected_output"],
+      "notes": "No concrete list of what to buy (expected output/inputs) and no clear budget. 'The usual' assumes shared context the assignee may not have. Not executable without a real list."
+    },
+    {
+      "id": "eval-007",
+      "category": "software",
+      "request": "Sam, migrate the billing service database to the new Postgres cluster. This is our top priority and must be finished by this Friday. It is also a low-priority background task with no fixed deadline, so only do it whenever you happen to have spare time. Use the migration runbook in the infra repo.",
+      "expected_readiness": "not_ready",
+      "expected_critical_fields": [],
+      "notes": "Contains directly contradictory information about priority and deadline (top priority, due Friday vs low priority, no deadline). A reviewer would block this until the conflict is resolved. Contradiction detection is declared by the probabilistic extractor, so this case may vary between model runs; expected_critical_fields left empty because the contradiction is a cross-field issue rather than a single named critical field."
+    },
+    {
+      "id": "eval-008",
+      "category": "small_business",
+      "request": "Please reply to the three customer refund emails in the support inbox.",
+      "expected_readiness": "not_ready",
+      "expected_critical_fields": ["expected_output"],
+      "notes": "Sounds actionable but is under-specified: no policy for whether to approve or deny refunds, no owner, and no definition of an acceptable reply. A person could not confidently execute this without guidance on the intended outcome."
+    }
+  ]
+}
