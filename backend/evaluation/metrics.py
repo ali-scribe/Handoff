@@ -1,4 +1,4 @@
-﻿"""Pure, testable evaluation metrics for Handoff.
+"""Pure, testable evaluation metrics for Handoff.
 
 These functions operate on already-collected predictions; they perform no I/O
 and never call the AI or the validator themselves. "Critical" is defined ONLY by
@@ -12,7 +12,7 @@ from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass
 
-from app.domain import Issue, IssueSeverity, ReadinessState
+from app.domain import Issue, IssueSeverity, ReadinessState, StructuredHandoff
 
 
 # --- Prediction record ------------------------------------------------------
@@ -34,6 +34,9 @@ class CasePrediction:
     predicted_readiness: ReadinessState | None = None
     predicted_issues: tuple[Issue, ...] = ()
     error: str | None = None
+    # Optional raw extraction, retained only for diagnostic mode. Metrics never
+    # read this; it defaults to None so normal evaluation is unaffected.
+    predicted_handoff: StructuredHandoff | None = None
 
     @property
     def evaluated(self) -> bool:

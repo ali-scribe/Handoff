@@ -1,4 +1,4 @@
-﻿"""Handoff evaluation infrastructure.
+"""Handoff evaluation infrastructure.
 
 A small, reproducible evaluation utility that runs a manually labeled dataset of
 realistic handoff requests through the REAL Handoff analysis pipeline (AI

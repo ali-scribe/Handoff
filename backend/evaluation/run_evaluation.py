@@ -1,9 +1,11 @@
-﻿"""Evaluation runner: run the seed dataset through the REAL Handoff pipeline.
+"""Evaluation runner: run the seed dataset through the REAL Handoff pipeline.
 
 Invoke explicitly (never at app startup):
 
     cd backend
-    python -m evaluation.run_evaluation
+    python -m evaluation.run_evaluation                 # summary only
+    python -m evaluation.run_evaluation --write-results  # + evaluation-results.json
+    python -m evaluation.run_evaluation --diagnostic     # + evaluation-diagnostics.json
 
 It loads ``handoff_cases.json``, structurally validates it, runs each request
 through the production ``AnalysisService`` (real Gemini extraction +
@@ -11,9 +13,16 @@ deterministic validation) built by the app's own dependency factory, compares
 predictions to the manually labeled ground truth using ``metrics.py``, prints a
 concise summary, and optionally writes ``evaluation-results.json``.
 
+Diagnostic mode (``--diagnostic``) additionally serializes, for every
+successfully evaluated case, the FULL real domain objects (StructuredHandoff +
+ValidationResult) for human investigation, and writes them to
+``evaluation-diagnostics.json``. It uses the same real pipeline and never
+duplicates extraction or validation logic.
+
 No business logic is duplicated here: readiness and issues come entirely from
 the real pipeline. Configuration (API key, model) comes solely from the existing
-backend config/.env — this module never reads or writes secrets.
+backend config/.env - this module never reads or writes secrets, headers, or
+raw provider responses.
 """
 
 from __future__ import annotations
@@ -24,12 +33,18 @@ import os
 from datetime import datetime, timezone
 from pathlib import Path
 
-from app.domain import HandoffFieldName, ReadinessState
+from app.domain import (
+    HandoffFieldName,
+    ReadinessState,
+    StructuredHandoff,
+    ValidationResult,
+)
 from evaluation import metrics
 from evaluation.metrics import CasePrediction
 
 DATASET_PATH = Path(__file__).with_name("handoff_cases.json")
 RESULTS_PATH = Path(__file__).with_name("evaluation-results.json")
+DIAGNOSTICS_PATH = Path(__file__).with_name("evaluation-diagnostics.json")
 EVALUATION_VERSION = 1
 
 _VALID_READINESS = {s.value for s in ReadinessState}
@@ -46,7 +61,7 @@ class DatasetError(ValueError):
 
 def load_dataset(path: Path = DATASET_PATH) -> dict:
     """Load and structurally validate the dataset JSON, returning the dict."""
-    with open(path, "r", encoding="utf-8") as fh:
+    with open(path, "r", encoding="utf-8-sig") as fh:
         data = json.load(fh)
     validate_dataset(data)
     return data
@@ -58,7 +73,7 @@ def validate_dataset(data: dict) -> None:
     Checks: top-level shape; unique non-empty ids; non-empty category/request;
     readiness values drawn from ReadinessState; expected_critical_fields (when
     present) drawn from HandoffFieldName. Raises DatasetError on the first
-    problem found. Pure — no I/O, no pipeline calls.
+    problem found. Pure - no I/O, no pipeline calls.
     """
     if not isinstance(data, dict):
         raise DatasetError("Dataset root must be a JSON object")
@@ -111,19 +126,23 @@ def validate_dataset(data: dict) -> None:
 # --- Running the real pipeline ----------------------------------------------
 
 
-def run_cases(cases, analysis_service) -> list[CasePrediction]:
+def run_cases(cases, analysis_service, capture_handoff: bool = False) -> list[CasePrediction]:
     """Run each case through the real analysis service, collecting predictions.
 
     An individual case failure (API/config/runtime) is recorded as an error on
     that CasePrediction and evaluation continues with the remaining cases; it is
     never treated as a model failure.
+
+    When ``capture_handoff`` is True the raw StructuredHandoff is retained on the
+    prediction (used only by diagnostic mode). This does not change any metric or
+    the normal results output.
     """
     predictions: list[CasePrediction] = []
     for case in cases:
         expected_readiness = ReadinessState(case["expected_readiness"])
         expected_critical = tuple(case.get("expected_critical_fields", []))
         try:
-            _handoff, result = analysis_service.analyze(case["request"])
+            handoff, result = analysis_service.analyze(case["request"])
             predictions.append(
                 CasePrediction(
                     id=case["id"],
@@ -132,6 +151,7 @@ def run_cases(cases, analysis_service) -> list[CasePrediction]:
                     expected_critical_fields=expected_critical,
                     predicted_readiness=result.readiness_state,
                     predicted_issues=tuple(result.issues),
+                    predicted_handoff=handoff if capture_handoff else None,
                 )
             )
         except Exception as exc:  # infrastructure error, not a model verdict
@@ -200,6 +220,110 @@ def build_results(predictions, dataset_version, model) -> dict:
     }
 
 
+# --- Diagnostic serialization (real domain objects only) --------------------
+
+
+def serialize_handoff(handoff: StructuredHandoff) -> dict:
+    """Serialize the real StructuredHandoff verbatim for human investigation.
+
+    Iterates the nine fields in the domain's canonical HandoffFieldName order and
+    copies each field's condition/value straight from the object. Contradictions
+    are the declared (field_a, field_b) pairs already present on the model. No
+    inference, no logic duplication, and nothing beyond the domain object (no
+    secrets, headers, or raw provider payloads).
+    """
+    fields = {}
+    for name in HandoffFieldName:
+        field = getattr(handoff, name.value)
+        fields[name.value] = {
+            "condition": field.condition.value,
+            "value": field.value,
+        }
+    return {
+        "fields": fields,
+        "contradictions": [
+            [a.value, b.value] for a, b in handoff.contradictions
+        ],
+    }
+
+
+def serialize_validation(validation: ValidationResult) -> dict:
+    """Serialize the real ValidationResult verbatim (readiness + every issue)."""
+    return {
+        "readiness_state": validation.readiness_state.value,
+        "issues": [
+            {
+                "issue_type": issue.issue_type.value,
+                "severity": issue.severity.value,
+                "field": issue.field.value,
+                "secondary_field": (
+                    issue.secondary_field.value
+                    if issue.secondary_field is not None
+                    else None
+                ),
+                "message": issue.explanation,
+            }
+            for issue in validation.issues
+        ],
+    }
+
+
+def build_diagnostics(predictions, dataset_version, model, cases_by_id) -> dict:
+    """Assemble the human-investigation diagnostic structure.
+
+    For every successfully evaluated case, includes the full extraction and
+    validation (real domain objects). Errored cases are recorded with their
+    error and NO fabricated extraction/validation.
+    """
+    diagnostic_cases = []
+    for p in predictions:
+        case_meta = cases_by_id.get(p.id, {})
+        entry = {
+            "id": p.id,
+            "category": p.category,
+            "request": case_meta.get("request"),
+            "expected_readiness": p.expected_readiness.value,
+            "expected_critical_fields": list(p.expected_critical_fields),
+            "error": p.error,
+        }
+        if p.evaluated:
+            entry["predicted_readiness"] = p.predicted_readiness.value
+            entry["readiness_correct"] = (
+                p.predicted_readiness == p.expected_readiness
+            )
+            entry["extraction"] = (
+                serialize_handoff(p.predicted_handoff)
+                if p.predicted_handoff is not None
+                else None
+            )
+            entry["validation"] = serialize_validation(
+                ValidationResult(
+                    readiness_state=p.predicted_readiness,
+                    issues=list(p.predicted_issues),
+                )
+            )
+        else:
+            # No fabricated extraction/validation for errored cases.
+            entry["predicted_readiness"] = None
+            entry["readiness_correct"] = None
+            entry["extraction"] = None
+            entry["validation"] = None
+        diagnostic_cases.append(entry)
+
+    return {
+        "evaluation_version": EVALUATION_VERSION,
+        "dataset_version": dataset_version,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "model": model,
+        "note": (
+            "Diagnostic output is for human investigation only. It is NOT "
+            "automatically generated ground truth and must not be used to label "
+            "the dataset."
+        ),
+        "cases": diagnostic_cases,
+    }
+
+
 def _pct(value) -> str:
     return "n/a" if value is None else f"{value * 100:.1f}%"
 
@@ -251,6 +375,14 @@ def main(argv=None) -> int:
         action="store_true",
         help="Write machine-readable results to evaluation-results.json",
     )
+    parser.add_argument(
+        "--diagnostic",
+        action="store_true",
+        help=(
+            "Also serialize full extraction + validation per case for human "
+            "investigation and write evaluation-diagnostics.json"
+        ),
+    )
     args = parser.parse_args(argv)
 
     data = load_dataset()
@@ -263,7 +395,9 @@ def main(argv=None) -> int:
     analysis_service = get_analysis_service()
     model = os.environ.get(ENV_MODEL, DEFAULT_MODEL)
 
-    predictions = run_cases(data["cases"], analysis_service)
+    predictions = run_cases(
+        data["cases"], analysis_service, capture_handoff=args.diagnostic
+    )
     results = build_results(predictions, data.get("version"), model)
 
     print(format_summary(results, DATASET_PATH.name))
@@ -272,6 +406,15 @@ def main(argv=None) -> int:
         with open(RESULTS_PATH, "w", encoding="utf-8") as fh:
             json.dump(results, fh, indent=2)
         print(f"\nWrote {RESULTS_PATH.name}")
+
+    if args.diagnostic:
+        cases_by_id = {c["id"]: c for c in data["cases"]}
+        diagnostics = build_diagnostics(
+            predictions, data.get("version"), model, cases_by_id
+        )
+        with open(DIAGNOSTICS_PATH, "w", encoding="utf-8") as fh:
+            json.dump(diagnostics, fh, indent=2)
+        print(f"Wrote {DIAGNOSTICS_PATH.name} (for human investigation only)")
 
     return 0
 

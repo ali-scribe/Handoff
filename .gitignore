@@ -14,3 +14,7 @@ dist/
 # ---- Editor / OS ----
 .DS_Store
 .vscode/
+
+# ---- Evaluation run output ----
+backend/evaluation/evaluation-results.json
+backend/evaluation/evaluation-diagnostics.json
