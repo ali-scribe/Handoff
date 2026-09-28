@@ -14,6 +14,7 @@ from app.extraction.errors import (
     MissingApiKeyError,
     ProviderFailureError,
     ProviderTimeoutError,
+    ProviderUnavailableError,
     SchemaValidationError,
     UnexpectedResponseError,
 )
@@ -26,6 +27,7 @@ ALL_ERROR_TYPES = [
     ProviderFailureError,
     MissingApiKeyError,
     ProviderTimeoutError,
+    ProviderUnavailableError,
     MalformedResponseError,
     SchemaValidationError,
     UnexpectedResponseError,
@@ -157,6 +159,7 @@ def test_from_pydantic_message_does_not_leak_input_values():
         ProviderFailureError,
         MissingApiKeyError,
         ProviderTimeoutError,
+        ProviderUnavailableError,
         MalformedResponseError,
         SchemaValidationError,
         UnexpectedResponseError,

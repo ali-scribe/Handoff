@@ -24,6 +24,7 @@ from app.extraction import (
     MissingApiKeyError,
     ProviderFailureError,
     ProviderTimeoutError,
+    ProviderUnavailableError,
     SchemaValidationError,
     UnexpectedResponseError,
 )
@@ -217,6 +218,7 @@ FAILURE_CASES = [
     (EmptyInputError("x"), 422, "empty_input"),
     (ProviderFailureError("x"), 502, "provider_failure"),
     (ProviderTimeoutError("x"), 504, "provider_timeout"),
+    (ProviderUnavailableError("x"), 503, "provider_unavailable"),
     (MalformedResponseError("x"), 502, "malformed_ai_response"),
     (SchemaValidationError("x"), 502, "schema_validation_failed"),
     (UnexpectedResponseError("x"), 502, "unexpected_ai_response"),

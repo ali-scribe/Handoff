@@ -23,6 +23,7 @@ EXPECTED_NAMES = {
     "ProviderFailureError",
     "MissingApiKeyError",
     "ProviderTimeoutError",
+    "ProviderUnavailableError",
     "MalformedResponseError",
     "SchemaValidationError",
     "UnexpectedResponseError",
@@ -42,6 +43,7 @@ def test_single_star_style_import_of_every_public_name_succeeds():
         MissingApiKeyError,
         ProviderFailureError,
         ProviderTimeoutError,
+        ProviderUnavailableError,
         RawExtraction,
         RawField,
         SchemaValidationError,
@@ -70,6 +72,7 @@ def test_reexports_are_the_same_objects_as_their_source_modules():
     assert pkg.ProviderFailureError is errors.ProviderFailureError
     assert pkg.MissingApiKeyError is errors.MissingApiKeyError
     assert pkg.ProviderTimeoutError is errors.ProviderTimeoutError
+    assert pkg.ProviderUnavailableError is errors.ProviderUnavailableError
     assert pkg.MalformedResponseError is errors.MalformedResponseError
     assert pkg.SchemaValidationError is errors.SchemaValidationError
     assert pkg.UnexpectedResponseError is errors.UnexpectedResponseError

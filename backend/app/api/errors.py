@@ -29,6 +29,7 @@ from app.extraction import (
     MissingApiKeyError,
     ProviderFailureError,
     ProviderTimeoutError,
+    ProviderUnavailableError,
     SchemaValidationError,
     UnexpectedResponseError,
 )
@@ -45,6 +46,7 @@ _ERROR_MAPPING: list[tuple[type[ExtractionError], int, str]] = [
     (SchemaValidationError, 502, "schema_validation_failed"),
     (UnexpectedResponseError, 502, "unexpected_ai_response"),
     (ProviderTimeoutError, 504, "provider_timeout"),
+    (ProviderUnavailableError, 503, "provider_unavailable"),
     (ProviderFailureError, 502, "provider_failure"),
     (ExtractionError, 502, "extraction_error"),  # generic catch-all, LAST
 ]
@@ -58,6 +60,7 @@ _SAFE_MESSAGES: dict[str, str] = {
     "schema_validation_failed": "The AI response did not match the expected schema.",
     "unexpected_ai_response": "The AI provider returned an unexpected response.",
     "provider_timeout": "The AI provider timed out.",
+    "provider_unavailable": "The AI service is temporarily busy. Please try again in a moment.",
     "provider_failure": "The AI provider failed to process the request.",
     "extraction_error": "The handoff could not be analyzed.",
 }

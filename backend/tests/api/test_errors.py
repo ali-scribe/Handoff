@@ -17,6 +17,7 @@ from app.extraction import (
     MissingApiKeyError,
     ProviderFailureError,
     ProviderTimeoutError,
+    ProviderUnavailableError,
     SchemaValidationError,
     UnexpectedResponseError,
 )
@@ -30,6 +31,7 @@ CASES = [
     (SchemaValidationError("x"), 502, "schema_validation_failed"),
     (UnexpectedResponseError("x"), 502, "unexpected_ai_response"),
     (ProviderTimeoutError("x"), 504, "provider_timeout"),
+    (ProviderUnavailableError("x"), 503, "provider_unavailable"),
     (ProviderFailureError("x"), 502, "provider_failure"),
     (ExtractionError("x"), 502, "extraction_error"),
 ]
@@ -54,6 +56,20 @@ def test_missing_api_key_resolves_to_500_not_502():
     assert response.error.code == "server_configuration_error"
     assert status_code != 502
     assert response.error.code != "provider_failure"
+
+
+def test_provider_unavailable_maps_to_503_with_retry_message():
+    # HTTP 503 -> a distinct 503 provider_unavailable with the user-facing,
+    # retryable message (not the generic 502 provider_failure).
+    status_code, response = extraction_error_to_response(
+        ProviderUnavailableError("x")
+    )
+    assert status_code == 503
+    assert response.error.code == "provider_unavailable"
+    assert (
+        response.error.message
+        == "The AI service is temporarily busy. Please try again in a moment."
+    )
 
 
 def test_generic_extraction_error_is_catch_all():

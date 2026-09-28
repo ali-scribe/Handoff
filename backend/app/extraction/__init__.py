@@ -12,6 +12,7 @@ from app.extraction.errors import (
     MissingApiKeyError,
     ProviderFailureError,
     ProviderTimeoutError,
+    ProviderUnavailableError,
     SchemaValidationError,
     UnexpectedResponseError,
 )
@@ -39,6 +40,7 @@ __all__ = [
     "ProviderFailureError",
     "MissingApiKeyError",
     "ProviderTimeoutError",
+    "ProviderUnavailableError",
     "MalformedResponseError",
     "SchemaValidationError",
     "UnexpectedResponseError",

@@ -18,6 +18,7 @@ from app.extraction.errors import (
     MalformedResponseError,
     ProviderFailureError,
     ProviderTimeoutError,
+    ProviderUnavailableError,
     UnexpectedResponseError,
 )
 from app.extraction.gemini_provider import GeminiProvider, _build_prompt
@@ -241,6 +242,59 @@ def test_non_2xx_status_raises_provider_failure(capture_post):
 
     with pytest.raises(ProviderFailureError):
         GeminiProvider(make_config()).extract("hi")
+
+
+def test_status_503_raises_provider_unavailable(capture_post):
+    """HTTP 503 -> ProviderUnavailableError (transient, distinct from 502 failure)."""
+    request = httpx.Request("POST", "https://example.test")
+    response = httpx.Response(503, request=request, text="service unavailable")
+    status_error = httpx.HTTPStatusError(
+        "unavailable", request=request, response=response
+    )
+    capture_post.set_response(FakeResponse(raise_status=status_error))
+
+    with pytest.raises(ProviderUnavailableError):
+        GeminiProvider(make_config()).extract("hi")
+
+
+def test_status_503_error_has_no_provider_body_or_key(capture_post):
+    """The raised 503 error carries no raw provider body and no API key."""
+    request = httpx.Request("POST", "https://example.test")
+    response = httpx.Response(
+        503, request=request, text="upstream detail with test-secret-key"
+    )
+    status_error = httpx.HTTPStatusError(
+        "unavailable", request=request, response=response
+    )
+    capture_post.set_response(FakeResponse(raise_status=status_error))
+
+    with pytest.raises(ProviderUnavailableError) as excinfo:
+        GeminiProvider(make_config()).extract("hi")
+
+    assert SECRET_KEY not in str(excinfo.value)
+    assert "upstream detail" not in str(excinfo.value)
+
+
+def test_status_503_is_logged_with_status_and_detail(capture_post, caplog):
+    """The full 503 status + body snippet is kept in server logs for debugging."""
+    import logging
+
+    request = httpx.Request("POST", "https://example.test")
+    response = httpx.Response(503, request=request, text="quota temporarily exceeded")
+    status_error = httpx.HTTPStatusError(
+        "unavailable", request=request, response=response
+    )
+    capture_post.set_response(FakeResponse(raise_status=status_error))
+
+    with caplog.at_level(logging.WARNING, logger="app.extraction.gemini_provider"):
+        with pytest.raises(ProviderUnavailableError):
+            GeminiProvider(make_config()).extract("hi")
+
+    logged = caplog.text
+    assert "503" in logged
+    assert "quota temporarily exceeded" in logged
+    # The API key must never appear in the logs.
+    assert SECRET_KEY not in logged
 
 
 def test_timeout_raises_provider_timeout(capture_post):

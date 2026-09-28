@@ -23,6 +23,15 @@ class ProviderTimeoutError(ExtractionError):
     """The provider timed out or was unavailable (Req 14.3)."""
 
 
+class ProviderUnavailableError(ExtractionError):
+    """The provider is temporarily unavailable (e.g. HTTP 503).
+
+    A transient, retryable condition distinct from a generic provider failure:
+    the request was well-formed but the AI service could not handle it right
+    now. Surfaced to the client as a temporary "try again" message.
+    """
+
+
 class MalformedResponseError(ExtractionError):
     """The provider returned a non-JSON / unparseable body (Req 14.4)."""
 

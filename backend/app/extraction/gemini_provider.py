@@ -10,6 +10,7 @@ from app.extraction.errors import (
     MalformedResponseError,
     ProviderFailureError,
     ProviderTimeoutError,
+    ProviderUnavailableError,
     UnexpectedResponseError,
 )
 
@@ -92,6 +93,16 @@ class GeminiProvider:
             status = exc.response.status_code
             detail = exc.response.text[:_ERROR_BODY_LOG_LIMIT].replace("\n", " ")
             logger.warning("Gemini request failed: HTTP %s - %s", status, detail)
+            # HTTP 503 is a transient "service unavailable" condition: the
+            # request was fine but Gemini could not handle it right now. Surface
+            # it as a retryable provider-unavailable error (distinct from a
+            # generic provider failure) so the client can show a "try again"
+            # message. The detailed status/body is already logged above; the
+            # raised error carries no provider text.
+            if status == 503:
+                raise ProviderUnavailableError(
+                    "The AI provider is temporarily unavailable"
+                ) from None
             raise ProviderFailureError("The AI provider request failed") from None
         except httpx.HTTPError as exc:
             # Transport/connection-level failure with no HTTP response (DNS,
