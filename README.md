@@ -191,10 +191,24 @@ Concise steps:
    FastAPI Cloud project settings.
 4. Deploy; FastAPI Cloud runs `fastapi run` and serves `app.main:app`.
 
-The frontend is a static build (`npm run build`, output in `frontend/dist/`) and
-is hosted separately. If the frontend is served from a different origin than the
-API, set `HANDOFF_CORS_ALLOW_ORIGINS` to that origin; for same-origin setups
-behind one reverse proxy, leave it unset.
+### Frontend (Vercel)
+
+The frontend is a static Vite build (`npm run build`, output in
+`frontend/dist/`) hosted separately from the API.
+
+- Set the project root/base directory to `frontend/`.
+- Build command `npm run build`, output directory `dist` (Vite defaults).
+- Set one environment variable, `VITE_API_BASE_URL`, to the backend's base URL
+  (the FastAPI Cloud origin, e.g. `https://your-app.fastapicloud.dev`). It is a
+  build-time variable read by the API client; no API URL is hardcoded.
+
+In local development `VITE_API_BASE_URL` is left unset, so requests stay
+relative (`/api/...`) and are handled by the Vite dev proxy. In production the
+variable makes requests absolute against the backend origin.
+
+Because the deployed frontend and backend are on different origins, set the
+backend's `HANDOFF_CORS_ALLOW_ORIGINS` to the frontend origin (the Vercel URL).
+For same-origin setups behind one reverse proxy, leave it unset.
 
 ## Built-in examples
 

@@ -11,9 +11,22 @@ import { ApiError } from "./errors";
 
 /**
  * The single network layer for the frontend. Every backend call goes through
- * here — components never call fetch() directly. Requests go to /api/* and are
- * proxied to FastAPI during development.
+ * here - components never call fetch() directly. Requests target /api/* paths.
+ *
+ * In local development VITE_API_BASE_URL is unset, so requests stay relative
+ * (e.g. "/api/handoff/analyze") and are handled by the Vite dev proxy. In
+ * production (e.g. Vercel), set VITE_API_BASE_URL to the backend's base URL
+ * (the FastAPI Cloud origin) and requests become absolute against it. No API
+ * URL is hardcoded.
  */
+
+/** Configurable backend base URL. Empty in dev (relative paths + Vite proxy). */
+const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "");
+
+/** Prefix an /api path with the configured base URL (no-op when unset). */
+function apiUrl(path: string): string {
+  return `${API_BASE}${path}`;
+}
 
 /** Client-side request timeout. Backend also enforces its own timeouts. */
 const REQUEST_TIMEOUT_MS = 30_000;
@@ -33,7 +46,7 @@ async function postJson<TReq, TRes>(path: string, body: TReq): Promise<TRes> {
 
   let response: Response;
   try {
-    response = await fetch(path, {
+    response = await fetch(apiUrl(path), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -77,23 +90,23 @@ async function toApiError(response: Response): Promise<ApiError> {
   );
 }
 
-/** GET /api/health — kept for connectivity checks; not surfaced in the UI. */
+/** GET /api/health - kept for connectivity checks; not surfaced in the UI. */
 export async function getHealth(): Promise<HealthResponse> {
-  const response = await fetch("/api/health");
+  const response = await fetch(apiUrl("/api/health"));
   if (!response.ok) {
     throw new ApiError("http_error", `Health request failed.`, response.status);
   }
   return (await response.json()) as HealthResponse;
 }
 
-/** POST /api/handoff/analyze — extract + validate raw request text. */
+/** POST /api/handoff/analyze - extract + validate raw request text. */
 export async function analyzeHandoff(text: string): Promise<AnalyzeResponse> {
   return postJson<{ text: string }, AnalyzeResponse>("/api/handoff/analyze", {
     text,
   });
 }
 
-/** POST /api/handoff/clarify — deterministic questions for the current handoff. */
+/** POST /api/handoff/clarify - deterministic questions for the current handoff. */
 export async function getClarificationQuestions(
   handoff: StructuredHandoff,
 ): Promise<Question[]> {
@@ -104,7 +117,7 @@ export async function getClarificationQuestions(
   return data.questions;
 }
 
-/** POST /api/handoff/apply-answers — apply answers + explicit contradiction resolutions, then re-validate. */
+/** POST /api/handoff/apply-answers - apply answers + explicit contradiction resolutions, then re-validate. */
 export async function applyAnswers(
   handoff: StructuredHandoff,
   answers: Answer[],
@@ -124,7 +137,7 @@ export async function applyAnswers(
   });
 }
 
-/** POST /api/handoff/format — render the current handoff to copyable text. */
+/** POST /api/handoff/format - render the current handoff to copyable text. */
 export async function formatHandoff(
   handoff: StructuredHandoff,
 ): Promise<string> {
