@@ -18,3 +18,8 @@ dist/
 # ---- Evaluation run output ----
 backend/evaluation/evaluation-results.json
 backend/evaluation/evaluation-diagnostics.json
+
+# ---- Local dev-server / QA logs (generated) ----
+.dev_*.log
+.qa_*.log
+*.err.log
