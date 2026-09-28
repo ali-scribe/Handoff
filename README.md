@@ -178,17 +178,23 @@ requires `fastapi[standard]` (already pinned in `backend/requirements.txt`).
 
 - Application directory: `backend/` (the FastAPI Cloud project root).
 - Entrypoint: `app.main:app` (auto-discovered by `fastapi run` from `backend/`).
-- Production environment variables (e.g. `GEMINI_API_KEY`, and optionally
-  `GEMINI_MODEL`, `GEMINI_TIMEOUT_SECONDS`, `HANDOFF_CORS_ALLOW_ORIGINS`) are
-  configured in the FastAPI Cloud project settings. They are never committed to
-  the repo; `.env` is git-ignored and used only for local development.
+- Production environment variables are configured in the FastAPI Cloud project
+  settings (never committed to the repo; `.env` is git-ignored and used only for
+  local development):
+  - `GEMINI_API_KEY` - your Google Gemini API key.
+  - `GEMINI_MODEL` - `gemini-flash-lite-latest`.
+  - `HANDOFF_CORS_ALLOW_ORIGINS` - the Vercel frontend origin, so browser
+    requests from the deployed frontend are allowed (the frontend and API are on
+    different origins).
+  - `GEMINI_TIMEOUT_SECONDS` is optional (defaults to `30.0`).
 
 Concise steps:
 
 1. Ensure `backend/requirements.txt` includes `fastapi[standard]`.
 2. Point the FastAPI Cloud project at the `backend/` directory.
-3. Set the required environment variables (at minimum `GEMINI_API_KEY`) in the
-   FastAPI Cloud project settings.
+3. Set `GEMINI_API_KEY`, `GEMINI_MODEL` (`gemini-flash-lite-latest`), and
+   `HANDOFF_CORS_ALLOW_ORIGINS` (the Vercel frontend URL) in the FastAPI Cloud
+   project settings.
 4. Deploy; FastAPI Cloud runs `fastapi run` and serves `app.main:app`.
 
 ### Frontend (Vercel)
@@ -204,11 +210,11 @@ The frontend is a static Vite build (`npm run build`, output in
 
 In local development `VITE_API_BASE_URL` is left unset, so requests stay
 relative (`/api/...`) and are handled by the Vite dev proxy. In production the
-variable makes requests absolute against the backend origin.
+variable makes requests absolute against the FastAPI Cloud backend origin.
 
-Because the deployed frontend and backend are on different origins, set the
-backend's `HANDOFF_CORS_ALLOW_ORIGINS` to the frontend origin (the Vercel URL).
-For same-origin setups behind one reverse proxy, leave it unset.
+The Vercel frontend and the FastAPI Cloud backend run on different origins, so
+the backend's `HANDOFF_CORS_ALLOW_ORIGINS` must be set to the Vercel frontend
+URL (see the FastAPI Cloud variables above) for browser requests to succeed.
 
 ## Built-in examples
 
