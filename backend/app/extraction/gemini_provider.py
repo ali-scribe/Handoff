@@ -21,6 +21,12 @@ _ENDPOINT = (
     "{model}:generateContent"
 )
 
+# Cap on how much of a Gemini error body we log, so a large/unexpected response
+# body cannot flood the logs. The body carries Gemini's own error reason (e.g.
+# invalid key, quota exceeded, model not found) and never contains OUR API key,
+# which is sent only as a request header.
+_ERROR_BODY_LOG_LIMIT = 500
+
 
 class GeminiProvider:
     """Gemini-backed ExtractionProvider (Req 11.3). Replaceable (Req 12).
@@ -77,8 +83,23 @@ class GeminiProvider:
             raise ProviderTimeoutError(
                 "The AI provider did not respond in time"
             ) from None
-        except httpx.HTTPError:
-            logger.warning("Gemini request failed")
+        except httpx.HTTPStatusError as exc:
+            # A non-2xx status from Gemini. Log the STATUS CODE and a bounded
+            # snippet of the response BODY for diagnosis (e.g. invalid key,
+            # quota exceeded, model not found). This is secret-safe: our API key
+            # is sent as a request header and is not present in the response
+            # body or status. The key/model name and full body are never logged.
+            status = exc.response.status_code
+            detail = exc.response.text[:_ERROR_BODY_LOG_LIMIT].replace("\n", " ")
+            logger.warning("Gemini request failed: HTTP %s - %s", status, detail)
+            raise ProviderFailureError("The AI provider request failed") from None
+        except httpx.HTTPError as exc:
+            # Transport/connection-level failure with no HTTP response (DNS,
+            # connection refused, TLS, etc.). Log the exception TYPE only — not
+            # its message/args — to aid diagnosis without risking any leak.
+            logger.warning(
+                "Gemini request failed: %s", type(exc).__name__
+            )
             raise ProviderFailureError("The AI provider request failed") from None
 
         # (1) Decode the HTTP body as JSON. A body that is not JSON at all is a
