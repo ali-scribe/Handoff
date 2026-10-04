@@ -25,11 +25,20 @@ request text
 3. **Clarification.** When information is missing or ambiguous, Handoff generates targeted clarification questions. You answer them, and the handoff is re-validated. Declared contradictions can be explicitly resolved.
 4. **Execution-ready handoff.** Once ready, the handoff is formatted into a clean, copyable text block.
 
+### Clarification answers and field validity
+
+When you answer a clarification question, the answer is applied to the target field and the handoff is re-validated by the same deterministic validator — a non-empty answer does not automatically make a field valid. Two deterministic checks guard against obviously insufficient answers:
+
+- **Dependencies can be explicitly none.** The dependencies question invites you to state that there are none. An explicit no-dependency answer such as `None` or `no dependencies` is treated as `not_applicable` (a valid, non-blocking completion), not as an unresolved dependency.
+- **Obviously insufficient answers are not accepted.** A bare single word — for example answering the dependencies question with just `Ali` — is not accepted as a meaningful dependency description and will not satisfy the field.
+
+Handoff does **not** attempt perfect semantic verification of whether an answer is factually correct. This is intentional: it checks whether the required information is sufficiently present and actionable for someone to execute the work, not whether every claim is objectively true.
+
 ## Key features
 
 - Nine-field structured extraction with an explicit per-field condition.
 - Deterministic readiness validation as the single source of truth (the AI never decides readiness).
-- Clarification questions generated from detected issues, with answer application and re-validation.
+- Clarification questions generated from detected issues, with answer application and re-validation (a non-empty answer alone does not satisfy a field; obviously insufficient answers are rejected, and an explicit "no dependencies" answer is accepted as `not_applicable`).
 - Explicit contradiction resolution.
 - Formatting into an execution-ready handoff.
 - Optional missing fields (e.g. context, constraints) do not block a ready handoff.
