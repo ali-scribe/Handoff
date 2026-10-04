@@ -1,6 +1,7 @@
 """Tests for the application-layer clarification flow (app.application.clarification_flow)."""
 
 import inspect
+import pytest
 
 from app.domain import (
     FieldCondition,
@@ -95,3 +96,66 @@ def test_format_ready_handoff_returns_text():
 def test_module_has_no_fastapi_import():
     source = inspect.getsource(clarification_flow)
     assert "fastapi" not in source
+
+
+# --- Regression: a non-deadline answer must not make the handoff READY --------
+
+def test_apply_and_revalidate_rejects_name_as_deadline():
+    """End-to-end: answering the deadline question with 'Ali' keeps it not READY."""
+    h = _handoff(deadline=_field("soon", FieldCondition.AMBIGUOUS))
+    updated, validation = apply_and_revalidate(
+        h, [Answer(field=HandoffFieldName.DEADLINE, value="Ali")]
+    )
+    assert validation.readiness_state != ReadinessState.READY
+    assert any(i.issue_type == IssueType.VAGUE_DEADLINE for i in validation.issues)
+    assert updated.deadline.condition == FieldCondition.AMBIGUOUS
+
+
+def test_apply_and_revalidate_accepts_real_deadline():
+    """A real deadline answer resolves the vague_deadline issue and reaches READY."""
+    h = _handoff(deadline=_field("soon", FieldCondition.AMBIGUOUS))
+    updated, validation = apply_and_revalidate(
+        h, [Answer(field=HandoffFieldName.DEADLINE, value="2026-09-30")]
+    )
+    assert validation.readiness_state == ReadinessState.READY
+    assert not any(
+        i.issue_type == IssueType.VAGUE_DEADLINE for i in validation.issues
+    )
+    assert updated.deadline.condition == FieldCondition.PRESENT
+
+
+# --- Regression: lone-word answers for description fields must not reach READY -
+
+@pytest.mark.parametrize(
+    "field",
+    [
+        HandoffFieldName.EXPECTED_OUTPUT,
+        HandoffFieldName.ACCEPTANCE_CRITERIA,
+        HandoffFieldName.DEPENDENCIES,
+    ],
+)
+def test_apply_and_revalidate_rejects_lone_word_for_description_fields(field):
+    """End-to-end: 'Ali' for a description field keeps the handoff not READY."""
+    h = _handoff(**{field.value: _field(None, FieldCondition.MISSING)})
+    updated, validation = apply_and_revalidate(
+        h, [Answer(field=field, value="Ali")]
+    )
+    assert validation.readiness_state != ReadinessState.READY
+    assert getattr(updated, field.value).condition == FieldCondition.MISSING
+
+
+@pytest.mark.parametrize(
+    "field,answer",
+    [
+        (HandoffFieldName.EXPECTED_OUTPUT, "A finished PDF report"),
+        (HandoffFieldName.ACCEPTANCE_CRITERIA, "Matches the approved template"),
+        (HandoffFieldName.DEPENDENCIES, "service-x"),
+    ],
+)
+def test_apply_and_revalidate_accepts_valid_description_answers(field, answer):
+    h = _handoff(**{field.value: _field(None, FieldCondition.MISSING)})
+    updated, validation = apply_and_revalidate(
+        h, [Answer(field=field, value=answer)]
+    )
+    assert validation.readiness_state == ReadinessState.READY
+    assert getattr(updated, field.value).condition == FieldCondition.PRESENT
