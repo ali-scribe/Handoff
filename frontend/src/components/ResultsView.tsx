@@ -96,8 +96,12 @@ function ResultsView({
       <h3 className="section-title">Structured handoff</h3>
       <StructuredFields handoff={handoff} validation={validation} />
 
-      <h3 className="issues-label">What's missing</h3>
-      <IssueList issues={validation.issues} />
+      {hasIssues && (
+        <>
+          <h3 className="issues-label">What's missing</h3>
+          <IssueList issues={validation.issues} />
+        </>
+      )}
 
       {clarifyAsync.status === "error" && (
         <ErrorBanner

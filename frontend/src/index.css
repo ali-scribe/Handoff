@@ -844,7 +844,7 @@ button.primary:active:not(:disabled) {
   border: 1px solid var(--color-border);
   border-left: 3px solid var(--color-border-strong);
   border-radius: var(--radius);
-  padding: var(--space-5) var(--space-6);
+  padding: var(--space-6) var(--space-8);
   margin-bottom: var(--space-8);
   background: var(--color-surface-2);
   animation: rise-in var(--motion-entrance) var(--ease) both;
@@ -862,16 +862,10 @@ button.primary:active:not(:disabled) {
   border-left-color: var(--color-notready);
 }
 
-.readiness-hero-heading {
-  margin: var(--space-2) 0 var(--space-1);
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
 .readiness-hero-sub {
-  margin: var(--space-2) 0 0;
-  color: var(--color-text);
-  font-size: var(--font-small);
+  margin: var(--space-3) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-body);
 }
 
 /* --- Readiness badge (moderate rounding, not a full pill) --- */
@@ -880,8 +874,8 @@ button.primary:active:not(:disabled) {
   align-items: center;
   gap: var(--space-2);
   font-weight: 600;
-  font-size: var(--font-small);
-  padding: var(--space-1) var(--space-3);
+  font-size: 1rem;
+  padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-sm);
   border: 1px solid currentColor;
 }
@@ -912,14 +906,14 @@ button.primary:active:not(:disabled) {
 /* --- Structured fields --- */
 .fields {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
 .field {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: var(--space-4);
-  background: var(--color-surface);
+  background: var(--color-surface-2);
   transition: border-color var(--motion-component) var(--ease),
     background var(--motion-component) var(--ease);
 }
