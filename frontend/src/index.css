@@ -310,11 +310,48 @@ body::before {
   padding: var(--space-12) var(--space-4) var(--space-12);
 }
 
+/*
+ * Skip-navigation link: visually hidden at rest, becomes visible on focus so
+ * keyboard users can bypass the header and jump straight to the main content.
+ * Positioned absolutely so it never shifts layout when it appears.
+ */
+.skip-nav {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 100;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-surface);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius);
+  font-size: var(--font-small);
+  font-weight: 600;
+  text-decoration: none;
+  /* Hidden until focused. */
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.skip-nav:focus-visible {
+  clip: auto;
+  clip-path: none;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
 /* --- Header (centered brand hero) --- */
 .app-header {
   position: relative;
-  margin-bottom: var(--space-10);
-  padding-bottom: var(--space-6);
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-5);
   text-align: center;
 }
 
@@ -372,11 +409,12 @@ body::before {
 }
 
 .app-tagline {
-  margin: var(--space-2) 0 0;
-  color: var(--color-text-muted);
-  font-size: var(--font-body);
-  font-weight: 450;
-  letter-spacing: 0.005em;
+  margin: var(--space-3) 0 0;
+  color: var(--color-text);
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  line-height: 1.3;
 }
 
 /* --- Cards / sections --- */
@@ -503,15 +541,18 @@ h3.section-title {
 
 /* --- Input screen --- */
 /*
- * Content heading ("What needs to be handed off?"). Sized as a strong section
- * heading — deliberately smaller than the centered brand title above so the
- * hierarchy reads brand > tagline > content heading.
+ * Content heading ("What needs to be handed off?"). Steps down from the brand
+ * title (3rem) and below the tagline (1.2rem) in qualitative register: the
+ * tagline is the product promise at full color/weight; this is the form label
+ * at section-heading size. The card enclosure provides the additional hierarchy
+ * signal that makes a size-equivalent or larger section heading still feel
+ * subordinate in the reading sequence.
  */
 .input-display {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   font-weight: 600;
   line-height: 1.2;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
   margin: 0 0 var(--space-3);
   color: var(--color-text);
 }
@@ -627,8 +668,8 @@ input[type="text"]:hover:not(:focus) {
   border-color: var(--color-text-muted);
 }
 
-textarea:focus,
-input[type="text"]:focus,
+textarea:focus-visible,
+input[type="text"]:focus-visible,
 button:focus-visible,
 input[type="checkbox"]:focus-visible {
   outline: 2px solid var(--color-focus-ring);
@@ -636,8 +677,8 @@ input[type="checkbox"]:focus-visible {
   border-color: var(--color-accent);
 }
 
-textarea:focus,
-input[type="text"]:focus {
+textarea:focus-visible,
+input[type="text"]:focus-visible {
   /* Subtle indigo border + very soft, restrained indigo ring (no neon glow). */
   box-shadow: 0 0 0 3px var(--color-focus-ring);
   outline: none;
@@ -1143,6 +1184,9 @@ button.primary:active:not(:disabled) {
   }
   .app-title {
     font-size: 2.25rem;
+  }
+  .app-tagline {
+    font-size: 1.05rem;
   }
   .input-display {
     font-size: 1.4rem;

@@ -80,28 +80,33 @@ function App() {
           : "results";
 
   return (
-    <div className="app">
+    <main className="app">
+      <a href="#main-content" className="skip-nav">
+        Skip to content
+      </a>
       <Header />
-      {phase === "input" && <InputView onAnalyzed={handleAnalyzed} />}
-      {phase === "results" && handoff && validation && (
-        <ResultsView
-          handoff={handoff}
-          validation={validation}
-          onApplied={handleApplied}
-          onFormatted={handleFormatted}
-          onClarifyingChange={setIsClarifying}
-        />
-      )}
-      {phase === "ready" && handoff && validation && formattedText !== null && (
-        <ExecutionReadyView
-          formattedText={formattedText}
-          readinessState={validation.readiness_state}
-          onReset={handleReset}
-        />
-      )}
+      <div id="main-content">
+        {phase === "input" && <InputView onAnalyzed={handleAnalyzed} />}
+        {phase === "results" && handoff && validation && (
+          <ResultsView
+            handoff={handoff}
+            validation={validation}
+            onApplied={handleApplied}
+            onFormatted={handleFormatted}
+            onClarifyingChange={setIsClarifying}
+          />
+        )}
+        {phase === "ready" && handoff && validation && formattedText !== null && (
+          <ExecutionReadyView
+            formattedText={formattedText}
+            readinessState={validation.readiness_state}
+            onReset={handleReset}
+          />
+        )}
+      </div>
 
       <ProcessFlow stage={processStage} />
-    </div>
+    </main>
   );
 }
 
