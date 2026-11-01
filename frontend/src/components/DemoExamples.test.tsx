@@ -28,7 +28,7 @@ describe("DemoExamples", () => {
     const onSelect = vi.fn();
     render(<DemoExamples onSelect={onSelect} />);
     fireEvent.click(
-      screen.getByRole("button", { name: /ready request/i }),
+      screen.getByRole("button", { name: /ready to hand off/i }),
     );
     const readyExample = DEMO_EXAMPLES.find((e) => e.id === "ready")!;
     expect(onSelect).toHaveBeenCalledWith(readyExample.text);
