@@ -2,6 +2,8 @@
 
 **Handoff checks whether a work request contains enough information for someone else to actually execute it.**
 
+live URL: https://handoff-flame-omega.vercel.app/
+
 When people hand off work (a task, a ticket, a project brief) they often leave out the details the other person needs: what "done" looks like, who owns it, what inputs are required, when it is due. Handoff takes a plain-language request, extracts its structure, and tells you whether it is ready to hand off, what is missing, and how to close the gaps.
 
 This is a university project / demo. It is built around a clear principle: **the AI extracts information, but a deterministic validator (not the AI) decides readiness.**
