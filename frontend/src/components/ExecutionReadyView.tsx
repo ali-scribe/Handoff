@@ -42,7 +42,7 @@ function ExecutionReadyView({
         <ReadinessBadge state={readinessState} />
       </div>
       <p className="backend-note">
-        Readiness above is determined by the backend, not this page.
+        This handoff is ready to share.
       </p>
 
       <pre className="formatted-output">{formattedText}</pre>

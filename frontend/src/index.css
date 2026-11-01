@@ -1134,6 +1134,12 @@ button.primary:active:not(:disabled) {
   animation: rise-in var(--motion-entrance) var(--ease) both;
 }
 
+/* The "Your handoff is ready" heading earns slightly more presence than the
+ * Results screen's neutral "Analysis" label — it's the payoff moment. */
+.card:has(#ready-title) .section-title {
+  font-size: 1.5rem;
+}
+
 .formatted-output {
   white-space: pre-wrap;
   word-break: break-word;

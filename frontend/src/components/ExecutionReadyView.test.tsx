@@ -29,7 +29,7 @@ describe("ExecutionReadyView", () => {
     expect(screen.getByText(/Owner: Alice/)).toBeInTheDocument();
   });
 
-  it("shows the backend readiness and notes it is backend-provided", () => {
+  it("shows the backend readiness and a share confirmation", () => {
     render(
       <ExecutionReadyView
         formattedText={FORMATTED}
@@ -38,7 +38,7 @@ describe("ExecutionReadyView", () => {
       />,
     );
     expect(screen.getByText("Ready to hand off")).toBeInTheDocument();
-    expect(screen.getByText(/determined by the backend/i)).toBeInTheDocument();
+    expect(screen.getByText(/ready to share/i)).toBeInTheDocument();
   });
 
   it("copies the text and shows success feedback", async () => {
