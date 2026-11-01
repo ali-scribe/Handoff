@@ -482,7 +482,7 @@ h3.section-title {
   margin: 0 0 var(--space-3);
   font-size: var(--font-small);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
@@ -807,6 +807,7 @@ button.primary:active:not(:disabled) {
   .question,
   body,
   .card,
+  .readiness-hero,
   .formatted-output,
   .example,
   .theme-toggle,
