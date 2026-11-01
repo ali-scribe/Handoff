@@ -1080,14 +1080,31 @@ button.primary:active:not(:disabled) {
   transition: border-color var(--motion-component) var(--ease);
 }
 
+/* Single-line question inputs: tighter vertical padding than the textarea. */
+.question input[type="text"] {
+  padding: var(--space-3) var(--space-4);
+}
+
 .question:focus-within {
   border-color: var(--color-border-strong);
+  /*
+   * Softened accent: shift toward indigo when a question is active, without
+   * the full strength of the input's own focus ring. color-mix provides the
+   * blend; the fallback above (--color-border-strong) is the warm-gray baseline
+   * that applies if color-mix is unsupported.
+   */
+  border-color: color-mix(in srgb, var(--color-accent) 40%, var(--color-border));
 }
 
 .question-text {
   font-weight: 600;
   color: var(--color-text);
   margin-bottom: var(--space-2);
+}
+
+/* The "Almost ready." heading: slightly more presence than a data label. */
+.clarification > .section-title {
+  font-size: 1.05rem;
 }
 
 .resolve-control {
