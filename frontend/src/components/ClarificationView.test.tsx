@@ -53,7 +53,9 @@ describe("ClarificationView", () => {
     const inputs = screen.getAllByRole("textbox");
     // Answer the first (objective), leave the second (deadline) blank.
     fireEvent.change(inputs[0], { target: { value: "Fix the login bug" } });
-    fireEvent.click(screen.getByRole("button", { name: /apply answers/i }));
+    const applyButton = screen.getByRole("button", { name: /apply answers/i });
+    expect(applyButton).toHaveClass("primary");
+    fireEvent.click(applyButton);
 
     await waitFor(() => expect(applyMock).toHaveBeenCalledOnce());
     const [handoffArg, answersArg, resolveArg] = applyMock.mock.calls[0];

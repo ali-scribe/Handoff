@@ -733,6 +733,46 @@ button.primary:active:not(:disabled) {
   box-shadow: var(--shadow-btn);
 }
 
+.pointer-cursor-live {
+  position: fixed;
+  z-index: 10000;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body.showcase-pointer-active,
+body.showcase-pointer-active * {
+  cursor: none !important;
+}
+
+body.showcase-pointer-active :is(
+    textarea,
+    input:not([type]),
+    input[type="text"],
+    input[type="search"],
+    input[type="email"],
+    input[type="url"],
+    input[type="tel"],
+    input[type="password"],
+    input[type="number"],
+    [contenteditable="true"],
+    [contenteditable=""]
+  ) {
+  cursor: text !important;
+}
+
+.pointer-cursor-live .showcase-pointer-cursor-arrow-edge {
+  fill: var(--color-bg);
+  stroke: var(--color-bg);
+}
+
+.pointer-cursor-live .showcase-pointer-cursor-body {
+  opacity: 0.62;
+}
+
 .button-row {
   display: flex;
   flex-wrap: wrap;
@@ -798,6 +838,9 @@ button.primary:active:not(:disabled) {
    * component also skips its rAF loop, so this is belt-and-suspenders.
    */
   .interactive-bg {
+    display: none;
+  }
+  .pointer-cursor-live {
     display: none;
   }
   button,

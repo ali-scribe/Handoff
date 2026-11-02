@@ -49,7 +49,9 @@ describe("ExecutionReadyView", () => {
         onReset={vi.fn()}
       />,
     );
-    fireEvent.click(screen.getByRole("button", { name: /copy handoff/i }));
+    const copyButton = screen.getByRole("button", { name: /copy handoff/i });
+    expect(copyButton).toHaveClass("primary");
+    fireEvent.click(copyButton);
 
     await waitFor(() => expect(writeText).toHaveBeenCalledWith(FORMATTED));
     expect(await screen.findByText(/copied/i)).toBeInTheDocument();

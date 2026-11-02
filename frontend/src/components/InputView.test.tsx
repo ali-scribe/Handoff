@@ -23,7 +23,7 @@ describe("InputView", () => {
     expect(
       screen.getByRole("heading", { name: /try an example/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /analyze/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /analyze/i })).toHaveClass("primary");
   });
 
   it("populates the textarea from a demo example without submitting", () => {
@@ -33,7 +33,7 @@ describe("InputView", () => {
     expect(textarea.value).toBe("");
 
     fireEvent.click(
-      screen.getByRole("button", { name: /load example: incomplete request/i }),
+      screen.getByRole("button", { name: /load example: missing details/i }),
     );
 
     // Textarea is populated, stays on the input screen, and does NOT analyze.
@@ -49,6 +49,7 @@ describe("InputView", () => {
   it("disables Analyze for empty/whitespace input", () => {
     render(<InputView onAnalyzed={vi.fn()} />);
     const button = screen.getByRole("button", { name: /analyze/i });
+    expect(button).toHaveClass("primary");
     expect(button).toBeDisabled();
 
     fireEvent.change(screen.getByLabelText(/work request/i), {

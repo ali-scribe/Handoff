@@ -33,7 +33,6 @@ function InputView({ onAnalyzed }: InputViewProps) {
   }
 
   return (
-    <>
     <section className="card" aria-labelledby="input-title">
       <h2 id="input-title" className="input-display">
         What needs to be handed off?
@@ -74,7 +73,6 @@ function InputView({ onAnalyzed }: InputViewProps) {
       */}
       <DemoExamples onSelect={setText} disabled={isLoading} />
     </section>
-    </>
   );
 }
 

@@ -46,6 +46,7 @@ Handoff does **not** attempt perfect semantic verification of whether an answer 
 - Optional missing fields (e.g. context, constraints) do not block a ready handoff.
 - Structured, secret-safe API error handling (no keys or raw provider responses in errors).
 - Light/dark theme with a warm, editorial visual design.
+- Theme-aware primary actions and a custom mouse cursor that preserves native text cursors and respects touch/reduced-motion preferences.
 - Built-in example requests to try the full flow immediately.
 - An offline evaluation harness for measuring real-world quality against a labeled dataset.
 
@@ -92,7 +93,7 @@ All routes are served under the /api prefix:
 
 ## Local setup
 
-Prerequisites: Python 3.12+ and Node.js 18+. You will need a Google Gemini API key.
+Prerequisites: Python 3.12+ and Node.js 20+ (required by the frontend test runner). You will need a Google Gemini API key.
 
 ### 1. Backend
 
